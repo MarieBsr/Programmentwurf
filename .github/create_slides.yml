@@ -1,0 +1,113 @@
+name: create slides
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  create_slides:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install latest nodejs
+      run: | 
+          sudo apt install -y curl
+          curl -sL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+          sudo apt-get update
+          sudo apt-get install -y nodejs
+    
+    - name: Install marp
+      run: sudo npm install -g @marp-team/marp-cli   
+
+    - name: Install google chrome
+      run: |
+        wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+
+    # create slides
+    - name: Create a temporary artifact downloads folder
+      working-directory: ${{github.workspace}}/docs/
+      run: mkdir downloads
+      
+    - name: create main pdf for part I
+      working-directory: ${{github.workspace}}/docs/
+      run: marp -c marp_config.yaml slides_learn2code_1.md -o downloads/slides_learn2code_1.pdf
+      
+    - name: create main pdf for part II
+      working-directory: ${{github.workspace}}/docs/
+      run: marp -c marp_config.yaml slides_learn2code_2.md -o downloads/slides_learn2code_2.pdf
+    
+    - name: create homework_1-1
+      working-directory: ${{github.workspace}}/docs/
+      run: marp -c marp_config.yaml Homework_1-1.md -o downloads/Homework_1-1.pdf
+
+    - name: create homework_1-2
+      working-directory: ${{github.workspace}}/docs/
+      run: marp -c marp_config.yaml Homework_1-2.md -o downloads/Homework_1-2.pdf
+
+    - name: create homework_1-3
+      working-directory: ${{github.workspace}}/docs/
+      run: marp -c marp_config.yaml Homework_1-3.md -o downloads/Homework_1-3.pdf
+
+    - name: create homework_1-4
+      working-directory: ${{github.workspace}}/docs/
+      run: marp -c marp_config.yaml Homework_1-4.md -o downloads/Homework_1-4.pdf
+
+    - name: create homework_1-5
+      working-directory: ${{github.workspace}}/docs/
+      run: marp -c marp_config.yaml Homework_1-5.md -o downloads/Homework_1-5.pdf
+
+    - name: create homework_1-6
+      working-directory: ${{github.workspace}}/docs/
+      run: marp -c marp_config.yaml Homework_1-6.md -o downloads/Homework_1-6.pdf
+
+    - name: create homework_1-7
+      working-directory: ${{github.workspace}}/docs/
+      run: marp -c marp_config.yaml Homework_1-7.md -o downloads/Homework_1-7.pdf
+  
+    - name: create homework_2-1
+      working-directory: ${{github.workspace}}/docs/
+      run: marp -c marp_config.yaml Homework_2-1.md -o downloads/Homework_2-1.pdf
+      
+    - name: create homework_2-2
+      working-directory: ${{github.workspace}}/docs/
+      run: marp -c marp_config.yaml Homework_2-2.md -o downloads/Homework_2-2.pdf
+        
+    - name: create homework_2-3
+      working-directory: ${{github.workspace}}/docs/
+      run: marp -c marp_config.yaml Homework_2-3.md -o downloads/Homework_2-3.pdf
+      
+    - name: create homework_2-4
+      working-directory: ${{github.workspace}}/docs/
+      run: marp -c marp_config.yaml Homework_2-4.md -o downloads/Homework_2-4.pdf
+
+    # create artifacts
+    - name: Use the Upload Artifact GitHub Action
+      uses: actions/upload-artifact@v4
+      with: 
+        name: slides_package
+        path: docs/downloads
+        retention-days: 2 # delete artifacts after two days
+        
+    # create pre-release
+    - name: create a pre-release
+      if: ${{ github.ref == 'refs/heads/main' }} # pre release only on main
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Slides Package"
+        files: |
+          docs/downloads/*.pdf

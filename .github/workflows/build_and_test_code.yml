@@ -1,0 +1,187 @@
+name: build and test code
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build_C_code:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install gtest manually
+      run: sudo apt-get install libgtest-dev -y
+
+    ## Configure and Build all projects
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -S${{github.workspace}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBUILD_PART_2=OFF -DBUILD_PART_2_OPENCV=OFF
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    ## run code in basics
+    - name: run "basics"
+      working-directory: ${{github.workspace}}/build/code/part_1/basics/
+      run: ./basics
+
+    ## run all in basics_in_C
+    - name: run "basics_in_C"
+      working-directory: ${{github.workspace}}/build/code/part_1/basics_in_C/
+      run: |
+           ./basics_in_c \
+           && ./branching_and_looping \
+           && ./c_arrays \
+           && ./macro \
+           && ./pointers \
+           && ./structures \
+           && ./variables 
+
+    ## run homework 1-2
+    - name: run "homework 1-2"
+      working-directory: ${{github.workspace}}/build/code/part_1/homework_1-2/
+      run: |
+           ./grades \
+           && ./percent
+        
+    ## run homework 1-3
+    - name: run "homework 1-3"
+      working-directory: ${{github.workspace}}/build/code/part_1/homework_1-3/
+      run: |
+           ./pointer_swap \
+           && ./student
+
+    ## run homework 1-4
+    - name: run "homework 1-4"
+      working-directory: ${{github.workspace}}/build/code/part_1/homework_1-4/
+      run: |
+           ./grades_1_4 
+      # do not run the leap year binary since it expects an input from the user
+           
+    ## run homework 1-4 student struct
+    - name: run "homework_1-4 - student struct"
+      working-directory: ${{github.workspace}}/build/code/part_1/homework_1-4/student_struct
+      run: ./student_struct_hw4_exec
+
+    ## run homework 1-6
+    - name: run "homework_1-6 - student struct"
+      working-directory: ${{github.workspace}}/build/code/part_1/homework_1-6
+      run: ./student_struct_hw_6_exec 
+
+    ## run & test homework 1-7
+    - name: run "homework_1-7 - student struct"
+      working-directory: ${{github.workspace}}/build/code/part_1/homework_1-7
+      run: ./student_struct_hw7_exec 
+
+    - name: test "homework_1-7 - student struct"
+      working-directory: ${{github.workspace}}/build/code/part_1/homework_1-7
+      run: ctest -C ${{env.BUILD_TYPE}}
+  
+  build_Cpp_code:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install gtest manually
+      run: sudo apt-get install libgtest-dev -y
+
+    ## Configure and Build all projects
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -S${{github.workspace}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBUILD_PART_1=OFF -DBUILD_PART_2_OPENCV=OFF
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      
+    ## run all in basics_in_Cpp
+    - name: run "basics_in_Cpp"
+      working-directory: ${{github.workspace}}/build/code/part_2/basics_in_Cpp/
+      run: |
+           ./hello_world_cpp \
+           && ./inheritance \
+           && ./multi_inheritance \
+           && ./namespace \
+           && ./struct_to_class \
+           && ./pointer_vs_reference \
+           && ./polymorphism \
+           && ./polymorphism_exercise \
+           && ./static_keyword \
+           && ./type_casting \
+           && ./templates \
+           && ./stl \
+           && ./stl_and_casting_exercise \
+           && ./exceptions
+           
+    ## Test TDD
+    - name: Test "tdd"
+      working-directory: ${{github.workspace}}/build/code/part_2/tdd
+      run: ctest -C ${{env.BUILD_TYPE}}
+      
+    ## run & test homework 2-3
+    - name: run "homework_2-3 - spiders & mammals"
+      working-directory: ${{github.workspace}}/build/code/part_2/homework_2-3
+      run: ./hw23_animals_exec 
+      
+    - name: test "homework_2-3 - spiders & mammals"
+      working-directory: ${{github.workspace}}/build/code/part_2/homework_2-3
+      run: ctest -C ${{env.BUILD_TYPE}}
+
+    ## run & test homework 2-4
+    - name: run "homework_2-4 - spiders & mammals II"
+      working-directory: ${{github.workspace}}/build/code/part_2/homework_2-4
+      run: ./hw24_animals_exec 
+      
+    - name: test "homework_2-4 - spiders & mammals II"
+      working-directory: ${{github.workspace}}/build/code/part_2/homework_2-4
+      run: ctest -C ${{env.BUILD_TYPE}}
+
+
+  build_Cpp_OpenCV_code:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install opencv manually
+      run: |
+        sudo apt-get update \
+        && sudo apt-get install build-essential software-properties-common libssl-dev libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev libopencv-dev -y
+
+    ## Configure and Build all projects
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -S${{github.workspace}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBUILD_PART_1=OFF -DBUILD_PART_2=OFF
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      
+    ## run all opencv executables
+    - name: run all opencv executables
+      working-directory: ${{github.workspace}}/build/code/part_2/opencv_basics/
+      run: |
+           ./opencv_hello \
+           && ./opencv_canny \
+           && ./opencv_contours
+
+    - name: run all cvplot executables
+      working-directory: ${{github.workspace}}/build/code/part_2/cv_plot/
+      run: |
+           ./cvplot_hello \
+           && ./read_csv \
+           && ./weather_analysis \
+           && ./uncertainty_ellipse 

@@ -1,0 +1,68 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install latest nodejs
+        run: | 
+            sudo apt install -y curl
+            curl -sL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+            sudo apt-get update
+            sudo apt-get install -y nodejs
+    
+      - name: Install marp
+        run: sudo npm install -g @marp-team/marp-cli  
+      
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Create a temporary folder
+        working-directory: ${{github.workspace}}
+        run: mkdir deploy
+      - name: copy all images to deploy
+        run: cp -R ${{github.workspace}}/docs/images ${{github.workspace}}/deploy/
+      - name: create main html for part I
+        working-directory: ${{github.workspace}}/docs/
+        run: marp -c marp_config.yaml slides_learn2code_1.md -o ${{github.workspace}}/deploy/part1.html
+      - name: create main html for part II
+        working-directory: ${{github.workspace}}/docs/
+        run: marp -c marp_config.yaml slides_learn2code_2.md -o ${{github.workspace}}/deploy/part2.html
+      - name: Create index.html
+        working-directory: ${{github.workspace}}/deploy
+        run: |
+          echo "<a href="part1.html">Part I</a><br>" > index.html
+          echo "<a href="part2.html">Part II</a>" >> index.html
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload entire repository
+          path: '${{github.workspace}}/deploy'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
