@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <string.h>
 #include "developer_group.h"
 
 developer_group create_developer_group(const char *logo){
@@ -19,6 +17,12 @@ void add_developer(developer_group *group, developer *dev){
 void print_developer_group(const developer_group *group){
     printf("%s\n", group->logo);
     for(int i = 0; i < group->count; i++){
-        print_developer(&group->developers[i]);
+        developer_print(group->developers[i]);
+    }
+}
+
+void print_developers(const developer_group *group){
+    for(int i = 0; i < group->count; i++){
+        developer_print(group->developers[i]);
     }
 }
