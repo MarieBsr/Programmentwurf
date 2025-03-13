@@ -14,8 +14,7 @@
 typedef struct {
     developer developers [MAX_DEVELOPERS];        //Array of developers
     int count;                                   // Current count of developers in the group
-    char logo[512];                             // Logo of the developer group
-    char logo [512];                           
+    char logo[512];                             // Logo of the developer group                          
 } developer_group;
 
 
