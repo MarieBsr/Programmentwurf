@@ -20,11 +20,12 @@ int main(){
         "  o   o   o      o   o    o\n"
 );
 
-developer developer1 = developer_create("Marie Basler", "MarieBsr");
-developer developer2 = developer_create("Katharina Benedikt", "Katharina1310");
+developer developer1 = developer_create("Marie Basler", "alias MarieBsr");
+developer developer2 = developer_create("Katharina Benedikt", "alias Katharina1310");
 
 add_developer(&group_F, &developer1);
 add_developer(&group_F, &developer2);
+
 int choice;
 do {
     printf("========================\n");
