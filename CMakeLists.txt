@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 #define the project name
-project(DeveloperGroup F VERSION 1.0 LANGUAGES C)
+project(DeveloperGroupF C)
 
 #define the c standard version
 set(CMAKE_C_STANDARD 11)
@@ -12,4 +12,4 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 add_compile_options(-Wall -Wextra -pedantic )
 
 #add an executable and assign files to it
-add_executable(DeveloperGroup F src/developer.c src/developer_group.c)
+add_executable(DeveloperGroupF src/developer.c src/main.c src/developer_group.c)
