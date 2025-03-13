@@ -12,5 +12,5 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 add_compile_options(-Wall -Wextra -pedantic )
 
 #add an executable and assign files to it
-include_directories(include)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 add_executable(DeveloperGroupF src/developer.c src/main.c src/developer_group.c)

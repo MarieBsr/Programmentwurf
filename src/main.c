@@ -1,8 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "developer_group.h"
 #include "developer.h"
 
-int main(){
+int main(void){
     developer_group group_F = create_developer_group( 
         "         o  o   o  o\n"
         "         |\\/ \\^/ \\/|\n"
@@ -27,6 +28,7 @@ add_developer(&group_F, &developer1);
 add_developer(&group_F, &developer2);
 
 int choice;
+char input[10];
 do {
     printf("========================\n");
     printf("Choose your action:\n");
@@ -36,7 +38,12 @@ do {
     printf("Exit [4]\n");
     printf("========================\n");
     printf("Enter choice: ");
-    scanf("%d", &choice);
+
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        choice = atoi(input);
+    } else {
+        choice = 0;
+    }
 
     switch (choice) {
         case 1:
@@ -58,3 +65,4 @@ do {
 } while (choice != 4);
 return 0;
 }
+
