@@ -12,7 +12,8 @@
 // Represents  group of developers, their count and their logo
 
 typedef struct {
-    developer developers [MAX_DEVELOPERS];        //Array of developers
+    //const int MAX_DEVELOPERS;
+    developer developers [2];        //Array of developers
     int count;                                   // Current count of developers in the group
     char logo[512];                             // Logo of the developer group                          
 } developer_group;
