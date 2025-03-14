@@ -1,5 +1,5 @@
-#ifndef DEVELOPER_GROUP_H
-#define DEVELOPER_GROUP_H
+#ifndef DEVELOPER_GROUP_H_85983745
+#define DEVELOPER_GROUP_H_85983745
 
 #include <stdio.h>
 #include <string.h>
